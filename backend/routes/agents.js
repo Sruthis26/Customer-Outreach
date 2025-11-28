@@ -3,10 +3,10 @@ const Agent = require('../models/Agent');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
-// Protect all routes
+
 router.use(authMiddleware);
 
-// Create agent
+
 router.post('/', async (req, res) => {
   try {
     const { name, email, mobile, password } = req.body;
@@ -18,8 +18,6 @@ router.post('/', async (req, res) => {
         message: 'All fields are required' 
       });
     }
-
-    // Check if agent already exists
     const existingAgent = await Agent.findOne({ email });
     if (existingAgent) {
       return res.status(400).json({ 
@@ -28,11 +26,10 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Create new agent
     const agent = new Agent({ name, email, mobile, password });
     await agent.save();
 
-    // Remove password from response
+
     const agentData = agent.toObject();
     delete agentData.password;
 
@@ -49,7 +46,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get all agents
+
 router.get('/', async (req, res) => {
   try {
     const agents = await Agent.find()
@@ -65,7 +62,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Delete agent
 router.delete('/:id', async (req, res) => {
   try {
     const agent = await Agent.findByIdAndDelete(req.params.id);
