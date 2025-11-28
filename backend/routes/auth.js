@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
       });
     }
     admin.email = 'admin@gmail.com';
-    admin.password = 'admin26'; // Will be hashed by pre-save hook
+    admin.password = 'admin26'; 
     await admin.save();
     res.json({ 
       success: true, 
