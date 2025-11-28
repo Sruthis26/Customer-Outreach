@@ -110,8 +110,8 @@ const Login = ({ onLogin }) => {
        <div className="login-footer">
   <p className="demo-credentials">
     <strong>Demo:</strong><br />
-    email: admin@company.com <br />
-    password: admin123
+    email: admin@gmail.com <br />
+    password: admin26
   </p>
 </div>
 
