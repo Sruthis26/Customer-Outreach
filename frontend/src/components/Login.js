@@ -109,7 +109,7 @@ const Login = ({ onLogin }) => {
 
         <div className="login-footer">
           <p className="demo-credentials">
-            <strong>Demo:</strong> admin@company.com / admin123
+            <strong>Demo:</strong> admin@company / admin26
           </p>
         </div>
       </div>
