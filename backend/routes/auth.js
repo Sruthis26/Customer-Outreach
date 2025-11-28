@@ -28,7 +28,7 @@ router.post('/reset-admin', async (req, res) => {
     res.json({ 
       success: true, 
       message: 'Admin reset successfully',
-      credentials: { email: 'admin@company.com', password: 'admin123' }
+      credentials: { email: 'admin@gmail.com', password: 'admin26' }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
