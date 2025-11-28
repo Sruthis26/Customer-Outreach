@@ -1,38 +1,121 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
+const express = require('express');
+const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
+const router = express.Router();
 
-async function resetAdmin() {
+router.post('/login', async (req, res) => {
   try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✓ Connected to MongoDB');
+    const { email, password } = req.body;
 
-    // Find and update admin
-    const admin = await Admin.findOne({});
-    
-    if (!admin) {
-      console.log('✗ No admin found');
-      process.exit(1);
+    if (!email || !password) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email and password are required' 
+      });
     }
 
-    console.log('Current admin email:', admin.email);
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid credentials' 
+      });
+    }
 
-    // Update credentials
+    const isMatch = await admin.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid credentials' 
+      });
+    }
+
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      success: true,
+      token,
+      admin: {
+        id: admin._id,
+        email: admin.email,
+        name: admin.name
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error during login' 
+    });
+  }
+});
+
+router.post('/update-admin', async (req, res) => {
+  try {
+    const admin = await Admin.findOne({});
+    if (!admin) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'No admin found' 
+      });
+    }
+
     admin.email = 'admin@gmail.com';
-    admin.password = 'admin26'; // Will be auto-hashed by pre-save hook
+    admin.password = 'admin26';
     await admin.save();
 
-    console.log('✓ Admin credentials updated successfully!');
-    console.log('New credentials:');
-    console.log('  Email: admin@gmail.com');
-    console.log('  Password: admin26');
-
-    process.exit(0);
+    res.json({ 
+      success: true, 
+      message: 'Admin updated successfully',
+      credentials: {
+        email: 'admin@gmail.com',
+        password: 'admin26'
+      }
+    });
   } catch (error) {
-    console.error('✗ Error:', error.message);
-    process.exit(1);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
   }
-}
+});
 
-resetAdmin();
+router.post('/setup-admin', async (req, res) => {
+  try {
+    const existingAdmin = await Admin.findOne({});
+    if (existingAdmin) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Admin already exists' 
+      });
+    }
+
+    const admin = new Admin({
+      email: 'admin@gmail.com',
+      password: 'admin26',
+      name: 'System Admin'
+    });
+
+    await admin.save();
+    
+    res.json({ 
+      success: true, 
+      message: 'Admin created successfully',
+      credentials: {
+        email: 'admin@gmail.com',
+        password: 'admin26'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+module.exports = router;
