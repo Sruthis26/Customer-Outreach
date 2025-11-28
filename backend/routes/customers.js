@@ -6,7 +6,6 @@ const Agent = require('../models/Agent');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
-// Configure multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage,
@@ -20,7 +19,7 @@ const upload = multer({
   }
 });
 
-// Protect all routes
+
 router.use(authMiddleware);
 
 // Upload and distribute customers
@@ -33,7 +32,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       });
     }
 
-    // Parse Excel/CSV file
     const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
@@ -47,7 +45,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       });
     }
 
-    // Check for required fields
     const requiredFields = ['FirstName', 'Phone'];
     const hasRequiredFields = requiredFields.every(field => 
       data[0].hasOwnProperty(field) || data[0].hasOwnProperty(field.toLowerCase())
@@ -60,7 +57,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       });
     }
 
-    // Get all active agents (limit to 5)
+
     const agents = await Agent.find({ isActive: true }).limit(5);
     if (agents.length === 0) {
       return res.status(400).json({ 
@@ -69,11 +66,11 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       });
     }
 
-    // Clear existing customers and agent assignments
+  
     await Customer.deleteMany({});
     agents.forEach(agent => agent.assignedCustomers = []);
 
-    // Distribute customers equally among agents
+  
     const customers = [];
     const agentCount = agents.length;
 
