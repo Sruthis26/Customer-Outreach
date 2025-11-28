@@ -13,7 +13,35 @@ router.post('/login', async (req, res) => {
         message: 'Email and password are required' 
       });
     }
+router.post('/update-admin', async (req, res) => {
+  try {
+    const admin = await Admin.findOne({});
+    if (!admin) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'No admin found' 
+      });
+    }
 
+    admin.email = 'admin@gmail.com';
+    admin.password = 'admin26'; // Will be hashed by pre-save hook
+    await admin.save();
+
+    res.json({ 
+      success: true, 
+      message: 'Admin updated successfully',
+      credentials: {
+        email: 'admin@gmail.com',
+        password: 'admin26'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
     const admin = await Admin.findOne({ email });
     if (!admin) {
       return res.status(401).json({ 
