@@ -107,11 +107,14 @@ const Login = ({ onLogin }) => {
           </button>
         </form>
 
-        <div className="login-footer">
-          <p className="demo-credentials">
-            <strong>Demo:</strong> admin@company / admin26
-          </p>
-        </div>
+       <div className="login-footer">
+  <p className="demo-credentials">
+    <strong>Demo:</strong><br />
+    email: admin@company.com <br />
+    password: admin123
+  </p>
+</div>
+
       </div>
     </div>
   );
