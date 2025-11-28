@@ -15,7 +15,7 @@ const Dashboard = ({ token, onLogout }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   
-  // Agent form state
+
   const [agentForm, setAgentForm] = useState({
     name: '',
     email: '',
@@ -23,7 +23,7 @@ const Dashboard = ({ token, onLogout }) => {
     password: ''
   });
 
-  // File upload state
+
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
