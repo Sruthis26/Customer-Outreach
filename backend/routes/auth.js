@@ -15,7 +15,25 @@ router.post('/login', async (req, res) => {
         message: 'Email and password are required' 
       });
     }
-    
+    // Add this route TEMPORARILY for testing
+router.post('/reset-admin', async (req, res) => {
+  try {
+    await Admin.deleteMany({});
+    const admin = new Admin({
+      email: 'admin@gmail.com',
+      password: 'admin26',
+      name: 'System Admin'
+    });
+    await admin.save();
+    res.json({ 
+      success: true, 
+      message: 'Admin reset successfully',
+      credentials: { email: 'admin@company.com', password: 'admin123' }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
     // Find admin
     const admin = await Admin.findOne({ email });
