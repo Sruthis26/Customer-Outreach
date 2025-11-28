@@ -74,8 +74,8 @@ router.post('/setup-admin', async (req, res) => {
 
     // Create default admin
     const admin = new Admin({
-      email: 'admin@company.com',
-      password: 'admin123',
+      email: 'admin@gmail.com',
+      password: 'admin26',
       name: 'System Admin'
     });
 
@@ -85,8 +85,8 @@ router.post('/setup-admin', async (req, res) => {
       success: true, 
       message: 'Admin created successfully',
       credentials: {
-        email: 'admin@company.com',
-        password: 'admin123'
+        email: 'admin@gmail.com',
+        password: 'admin26'
       }
     });
   } catch (error) {
