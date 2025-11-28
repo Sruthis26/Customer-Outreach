@@ -3,39 +3,17 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const router = express.Router();
 
-// Login route
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({ 
         success: false, 
         message: 'Email and password are required' 
       });
     }
-    // Add this route TEMPORARILY for testing
-router.post('/reset-admin', async (req, res) => {
-  try {
-    await Admin.deleteMany({});
-    const admin = new Admin({
-      email: 'admin@gmail.com',
-      password: 'admin26',
-      name: 'System Admin'
-    });
-    await admin.save();
-    res.json({ 
-      success: true, 
-      message: 'Admin reset successfully',
-      credentials: { email: 'admin@gmail.com', password: 'admin26' }
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
 
-    // Find admin
     const admin = await Admin.findOne({ email });
     if (!admin) {
       return res.status(401).json({ 
@@ -44,7 +22,6 @@ router.post('/reset-admin', async (req, res) => {
       });
     }
 
-    // Check password
     const isMatch = await admin.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ 
@@ -53,7 +30,6 @@ router.post('/reset-admin', async (req, res) => {
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: admin._id, email: admin.email },
       process.env.JWT_SECRET,
@@ -78,7 +54,6 @@ router.post('/reset-admin', async (req, res) => {
   }
 });
 
-// Create initial admin (for setup only)
 router.post('/setup-admin', async (req, res) => {
   try {
     // Check if admin already exists
@@ -90,10 +65,9 @@ router.post('/setup-admin', async (req, res) => {
       });
     }
 
-    // Create default admin
     const admin = new Admin({
-      email: 'admin@gmail.com',
-      password: 'admin26',
+      email: 'admin@company.com',
+      password: 'admin123',
       name: 'System Admin'
     });
 
@@ -103,8 +77,8 @@ router.post('/setup-admin', async (req, res) => {
       success: true, 
       message: 'Admin created successfully',
       credentials: {
-        email: 'admin@gmail.com',
-        password: 'admin26'
+        email: 'admin@company.com',
+        password: 'admin123'
       }
     });
   } catch (error) {
